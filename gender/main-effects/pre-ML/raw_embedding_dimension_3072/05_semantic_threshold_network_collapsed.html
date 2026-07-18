@@ -755,6 +755,9 @@
     return task + "/" + theory;
   }
 
+  const PAGE_SUFFIX_RE =
+    /((?:gender|race)\/(?:main-effects|soi)\/(?:pre-ML|post-ML)\/[^/]+\/[^/]+?)(?:\.html)?$/i;
+
   function normalizeNavPath(path) {
     if (path == null) return "";
     let p = decodeURIComponent(String(path)).trim();
@@ -765,13 +768,17 @@
         /* keep p */
       }
     }
+    const pageMatch = p.match(PAGE_SUFFIX_RE);
+    if (pageMatch) {
+      return pageMatch[1].toLowerCase();
+    }
     const marker = "/network/";
     const markerIndex = p.indexOf(marker);
     if (markerIndex !== -1) {
       p = p.slice(markerIndex + marker.length);
     }
     p = p.replace(/^\//, "").replace(/\/$/, "");
-    if (!p || p === "index" || p === "index.html") return "";
+    if (!p || p === "index" || p === "index.html" || !p.includes("/")) return "";
     if (p.endsWith(".html")) p = p.slice(0, -5);
     if (p === "index") return "";
     return p.toLowerCase();
@@ -800,19 +807,20 @@
     }
   }
 
-  function isWebDeployment() {
-    const p = window.location.protocol;
-    return p === "http:" || p === "https:";
-  }
-
   /** Path to current page relative to the network site root (no leading slash). */
   function networkPathSuffix() {
     const path = decodeURIComponent(window.location.pathname);
+    const pageMatch = path.match(
+      /((?:gender|race)\/(?:main-effects|soi)\/(?:pre-ML|post-ML)\/[^/]+\/[^/]+\.html)$/i
+    );
+    if (pageMatch) return pageMatch[1];
     const marker = "/network/";
     const markerIndex = path.indexOf(marker);
     if (markerIndex !== -1) {
-      return path.slice(markerIndex + marker.length);
+      const rest = path.slice(markerIndex + marker.length).replace(/\/$/, "");
+      return rest || "index.html";
     }
+    if (/\/index\.html$/i.test(path) || /\/$/.test(path)) return "index.html";
     return path.replace(/^\//, "").replace(/\/$/, "");
   }
 
@@ -820,35 +828,19 @@
     return currentResolvedPath();
   }
 
-  /** Build href for a catalog entry from the current page location. */
+  /**
+   * Always use relative hrefs so project Pages
+   * (e.g. /human-ai-semantic-network/) and local browsing both work.
+   * Absolute "/..." links would escape to the host root.
+   */
   function navLinkHref(itemHref) {
-    let target = String(itemHref).replace(/^\//, "");
-    if (isWebDeployment()) {
-      if (target.toLowerCase().endsWith(".html")) {
-        target = target.slice(0, -5);
-      }
-      target = target.toLowerCase();
-      const root = networkSiteRoot();
-      return (root ? root + "/" : "/") + target;
-    }
-    return navBasePrefixLocal() + target;
+    const target = String(itemHref).replace(/^\//, "");
+    return navBasePrefix() + target;
   }
 
-  /** Site root prefix for http(s), e.g. "" or "/network". */
-  function networkSiteRoot() {
-    const path = decodeURIComponent(window.location.pathname);
-    const marker = "/network/";
-    const markerIndex = path.indexOf(marker);
-    if (markerIndex !== -1) {
-      return path.slice(0, markerIndex + "/network".length);
-    }
-    return "";
-  }
-
-  /** Relative prefix for local file:// browsing. */
-  function navBasePrefixLocal() {
+  function navBasePrefix() {
     const suffix = networkPathSuffix();
-    if (!suffix || suffix === "index.html") return "";
+    if (!suffix || suffix === "index.html" || suffix === "index") return "";
     const depth = suffix.split("/").filter(Boolean).length - 1;
     return depth > 0 ? "../".repeat(depth) : "";
   }
