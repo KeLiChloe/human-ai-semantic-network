@@ -828,13 +828,50 @@
     return currentResolvedPath();
   }
 
+  function isHttpDeployment() {
+    const p = window.location.protocol;
+    return p === "http:" || p === "https:";
+  }
+
   /**
-   * Always use relative hrefs so project Pages
-   * (e.g. /human-ai-semantic-network/) and local browsing both work.
-   * Absolute "/..." links would escape to the host root.
+   * Host-absolute site root for http(s), e.g. "/human-ai-semantic-network" or "/network".
+   * Relative links break when the URL omits a trailing slash
+   * (/human-ai-semantic-network + "gender/..." => /gender/...).
    */
+  function networkSiteRoot() {
+    if (!isHttpDeployment()) return null;
+
+    const scripts = document.getElementsByTagName("script");
+    for (let i = 0; i < scripts.length; i++) {
+      const src = scripts[i].src;
+      if (!src || !/sidebar\.js(\?|$)/i.test(src)) continue;
+      try {
+        const pathname = new URL(src, window.location.href).pathname;
+        return pathname.replace(/\/network_interactive\/sidebar\.js$/i, "") || "";
+      } catch {
+        /* keep looking */
+      }
+    }
+
+    const path = decodeURIComponent(window.location.pathname);
+    const underPage = path.match(
+      /^(.*)\/(?:gender|race)\/(?:main-effects|soi)\/(?:pre-ML|post-ML)\//i
+    );
+    if (underPage) return underPage[1];
+
+    let root = path.replace(/\/index\.html$/i, "").replace(/\/$/, "");
+    return root || "";
+  }
+
+  /** Build href for a catalog entry from the current page location. */
   function navLinkHref(itemHref) {
     const target = String(itemHref).replace(/^\//, "");
+    const root = networkSiteRoot();
+    if (root !== null) {
+      // Keep .html; project Pages need the real filename.
+      return (root ? root : "") + "/" + target;
+    }
+    // file:// — stay relative to the current document.
     return navBasePrefix() + target;
   }
 
