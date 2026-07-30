@@ -9,7 +9,7 @@
   const PHASE_ORDER = ["pre-ML", "post-ML"];
   const VARIANT_ORDER = ["three_groups", "collapsed"];
   const VARIANT_LABELS = {
-    three_groups: "Three groups (PhDs, Senior scientists, GenAI)",
+    three_groups: "Three groups (PhDs, Senior Scientists, GenAI)",
     collapsed: "Two groups (Humans and GenAI)",
   };
   const OPEN_SECTIONS_KEY = "network-sidebar-open-sections";
