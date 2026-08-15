@@ -38,9 +38,9 @@
 
 .sidebar-brand h1 {
   margin: 0;
-  font-family: "Instrument Serif", Georgia, serif;
-  font-size: 1.35rem;
-  font-weight: 400;
+  font-family: "Source Sans 3", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.28rem;
+  font-weight: 700;
   line-height: 1.15;
   color: #0f172a;
 }
@@ -58,9 +58,9 @@
 .nav-task-title {
   margin: 0 0 0.35rem;
   padding: 0.35rem 0.55rem;
-  font-family: "Instrument Serif", Georgia, serif;
-  font-size: 1.15rem;
-  font-weight: 400;
+  font-family: "Source Sans 3", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 600;
   color: #1e293b;
 }
 
@@ -195,7 +195,7 @@
 
 .index-welcome h2 {
   margin: 0 0 0.75rem;
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Source Sans 3", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(1.75rem, 3vw, 2.35rem);
   font-weight: 400;
   color: #0f172a;
