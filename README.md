@@ -1,7 +1,7 @@
-# human-ai-semantic-network (archived)
+# human-ai-semantic-network
 
-This standalone site has been **merged into** the paper supplementary materials:
+Interactive semantic network explorer for the Human–AI theory-building study.
 
-https://kelichloe.github.io/human-ai-supplementary/semantic-network/
+**Live site:** https://kelichloe.github.io/human-ai-semantic-network/
 
-The root `index.html` redirects there. Prefer the integrated site for all future use.
+Open `index.html` in the sidebar to browse gender and race networks (main effects and interactions, pre-ML and post-ML).
